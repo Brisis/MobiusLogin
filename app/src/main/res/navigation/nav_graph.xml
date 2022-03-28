@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
         android:id="@+id/mainFragment"
@@ -11,27 +11,21 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
-            android:id="@+id/action_mainFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_mainFragment_to_loginFragment2"
+            app:destination="@id/loginFragment2" />
     </fragment>
-
     <fragment
-        android:id="@+id/loginFragment"
+        android:id="@+id/loginFragment2"
         android:name="com.itinordic.mobiuslogin.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment_to_profileFragment"
-            app:destination="@id/profileFragment"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"/>
+            android:id="@+id/action_loginFragment2_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
     </fragment>
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/profileFragment2"
         android:name="com.itinordic.mobiuslogin.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
-
 </navigation>

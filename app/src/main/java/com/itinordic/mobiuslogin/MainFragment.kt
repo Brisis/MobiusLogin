@@ -33,7 +33,7 @@ class MainFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when(v!!.id){
-            R.id.view_login_btn -> navController!!.navigate(R.id.action_mainFragment_to_loginFragment)
+            R.id.view_login_btn -> navController!!.navigate(R.id.action_mainFragment_to_loginFragment2)
         }
     }
 }
