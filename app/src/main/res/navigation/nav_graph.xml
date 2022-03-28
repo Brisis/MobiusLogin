@@ -19,6 +19,7 @@
         android:name="com.itinordic.mobiuslogin.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
+        <argument android:name="username" android:defaultValue="None" />
         <action
             android:id="@+id/action_loginFragment2_to_profileFragment2"
             app:destination="@id/profileFragment2" />
