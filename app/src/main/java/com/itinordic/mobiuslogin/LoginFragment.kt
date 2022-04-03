@@ -1,17 +1,29 @@
 package com.itinordic.mobiuslogin
 
 import android.os.Bundle
-import android.text.TextUtils
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.itinordic.mobiuslogin.data.LoginRepository
+import com.itinordic.mobiuslogin.mobius.LoginEffectHandler
+import com.itinordic.mobiuslogin.mobius.LoginLogic
+import com.itinordic.mobiuslogin.mobius.Model
+import com.itinordic.mobiuslogin.mobius.effects.*
+import com.itinordic.mobiuslogin.mobius.events.*
+import com.itinordic.mobiuslogin.retrofit.LoginService
+import com.spotify.mobius.*
+import com.spotify.mobius.rx2.RxMobius
 import kotlinx.android.synthetic.main.fragment_login.*
+
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
+
 
 class LoginFragment : Fragment(), View.OnClickListener {
 
@@ -20,6 +32,8 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        loop.dispatchEvent(EmailInputChanged(model.email))
+        loop.dispatchEvent(PasswordInputChanged(model.password))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,27 +50,31 @@ class LoginFragment : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
-    private val loginRepository = LoginService()
+    private val model = Model(
+        email = "",
+        password = "",
+        canLogin = false,
+        loggingIn = false
+    )
+
+    private val loop: MobiusLoop<Model, Event, Effect> =
+        Mobius.loop(LoginLogic(), LoginEffectHandler())
+            .startFrom(model)
 
     override fun onClick(v: View?) {
+        val username = username_input.text.toString()
+        val password = password_input.text.toString()
+
         when(v!!.id){
             R.id.sign_in_button -> {
-                val username = username_input.text.toString()
-                val password = password_input.text.toString()
-
                 if(username.isNotEmpty() && password.isNotEmpty()){
 
-                    val doLogin = loginRepository.login(username,password)
-                    if (doLogin){
-                        val bundle = bundleOf(
-                            "username" to username,
-                        )
-                        navController!!.navigate(
-                            R.id.action_loginFragment2_to_profileFragment2,
-                            bundle
-                        )
-                    }
+                    loop.dispatchEvent(EmailInputChanged(username))
+                    loop.dispatchEvent(PasswordInputChanged(password))
 
+                    loop.dispatchEvent(
+                        LoginRequested
+                    )
                 }
                 else{
                     Toast.makeText(activity, "Enter details to login", Toast.LENGTH_SHORT).show()
@@ -64,6 +82,8 @@ class LoginFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
+
 
 
 }

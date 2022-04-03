@@ -7,16 +7,32 @@ import com.itinordic.mobiuslogin.mobius.effects.ShowErrorMessage
 import com.itinordic.mobiuslogin.mobius.events.*
 import com.spotify.mobius.Effects
 import com.spotify.mobius.Next
+import com.spotify.mobius.Update
+import java.lang.IllegalStateException
 
-class MobiusService {
-    private fun update(model: Model, event: Event): Next<Model, Effect> =
+class LoginLogic : Update<Model, Event, Effect> {
+    override fun update(model: Model, event: Event): Next<Model, Effect> {
         when(event){
-            is EmailInputChanged -> onEmailChanged(model, event)
-            is PasswordInputChanged -> onPasswordChanged(model, event)
-            is LoginRequested -> onLoginRequested(model)
-            is LoginSuccessful -> onLoginSuccess(model)
-            is LoginFailed -> onLoginFailed(model, event)
+            is EmailInputChanged -> {
+                return onEmailChanged(model, event)
+            }
+            is PasswordInputChanged -> {
+                return onPasswordChanged(model, event)
+            }
+            is LoginRequested -> {
+                return onLoginRequested(model)
+            }
+            is LoginSuccessful -> {
+                return onLoginSuccess(model)
+            }
+            is LoginFailed -> {
+                return onLoginFailed(model, event)
+            }
+            else -> {
+                throw IllegalStateException("Unhandled event: $event")
+            }
         }
+    }
 
     private fun verifyCreds(email: String, password: String) : Boolean {
         return email.isNotEmpty() && password.isNotEmpty()
@@ -27,8 +43,9 @@ class MobiusService {
             model.copy(
                 email = event.email,
                 canLogin = verifyCreds(event.email, model.password)
+            ),
+
             )
-        )
 
     private fun onPasswordChanged(model: Model, event: PasswordInputChanged) : Next<Model, Effect> =
         Next.next(
@@ -46,8 +63,6 @@ class MobiusService {
             )
         else
             Next.dispatch(Effects.effects(ShowErrorMessage("Can't Login")))
-    //noChange() // tells mobius there is no state change
-    //next(model)
 
     private fun onLoginSuccess(model: Model) : Next<Model, Effect> =
         Next.dispatch(Effects.effects(NavigateToProfile))
@@ -57,17 +72,4 @@ class MobiusService {
             model.copy(loggingIn = false),
             Effects.effects(ShowErrorMessage(event.errorMsg))
         )
-
-
-//    fun loginHandler(attemptLogin: Observable<AttemptLogin>) =
-//        attemptLogin.swithMap{
-//            loginService.login(it.email, it.password)
-//                .map{ result ->
-//                    when(result) {
-//                        is SnapshotApplyResult.Success -> LoginSuccessful
-//                        is Timeout -> LoginFailed("Login Request Timed Out")
-//                        is SnapshotApplyResult.Failure -> LoginFailed(result.message)
-//                    }
-//                }
-//        }
 }
