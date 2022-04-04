@@ -1,7 +1,11 @@
 package com.itinordic.mobiuslogin.retrofit
 
 import android.util.Log
+import com.itinordic.mobiuslogin.LoginFragment
 import com.itinordic.mobiuslogin.data.AccessToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -10,7 +14,8 @@ import retrofit2.Response
  * I will put mobius service in here
  */
 class LoginService {
-    fun login(username: String,password: String){
+    lateinit var responseToken: String
+    fun login(username: String,password: String) : String {
         val retrofitApi : GetDataService = RetrofitAPI.getInstance().create(GetDataService::class.java)
         // launching a new coroutine
 
@@ -31,11 +36,12 @@ class LoginService {
                 response: Response<AccessToken>
             ) {
                 if (response.isSuccessful){
-                    Log.d("AccessToken: ", response.body().toString())
+                    responseToken = response.body()!!.accessToken
+                    Log.d("AccessToken: ", responseToken)
+                    LoginFragment.newInstance(responseToken)
                 }
                 else {
-                    Log.d("AccessTokenError: ", response.errorBody().toString())
-                    //Toast.makeText((requireActivity() as MainActivity),"An error occurred!", Toast.LENGTH_LONG).show()
+                    Log.d("AccessTokenError: ", responseToken)
                 }
             }
 
@@ -45,5 +51,6 @@ class LoginService {
 
         })
 
+        return responseToken
     }
 }

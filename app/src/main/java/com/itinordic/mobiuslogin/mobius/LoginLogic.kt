@@ -61,6 +61,12 @@ class LoginLogic : Update<Model, Event, Effect> {
                 model.copy(loggingIn = true),
                 Effects.effects(AttemptLogin(model.email, model.password))
             )
+        else if(model.loggingIn && model.canLogin){
+            Next.next(
+                model,
+                Effects.effects(AttemptLogin(model.email, model.password))
+            )
+        }
         else
             Next.dispatch(Effects.effects(ShowErrorMessage("Can't Login")))
 
