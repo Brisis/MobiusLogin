@@ -12,8 +12,10 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.itinordic.mobiuslogin.data.model.LoggedInUser
 import com.itinordic.mobiuslogin.mobius.LoginEffectHandler
 import com.itinordic.mobiuslogin.mobius.LoginLogic
@@ -25,12 +27,7 @@ import kotlinx.android.synthetic.main.fragment_login.*
 
 import kotlinx.coroutines.launch
 
-var ACCESS_TOKEN = ""
-
 class LoginFragment : Fragment(), View.OnClickListener {
-
-    private var accessToken: String? = null
-
     private var navController : NavController? = null
     lateinit var model: Model
     lateinit var loop: MobiusLoop<Model, Event, Effect>
@@ -103,14 +100,14 @@ class LoginFragment : Fragment(), View.OnClickListener {
                         LoginRequested
                     )
 
-                    val bundle = bundleOf(
-                        "username" to username,
-                    )
-
-                    navController!!.navigate(
-                        R.id.action_loginFragment2_to_profileFragment2,
-                        bundle
-                    )
+//                    val bundle = bundleOf(
+//                        "username" to username,
+//                    )
+//
+//                    navController!!.navigate(
+//                        R.id.action_loginFragment2_to_profileFragment2,
+//                        bundle
+//                    )
                 }
                 else{
                     Toast.makeText(activity, "Enter details to login", Toast.LENGTH_SHORT).show()
@@ -119,16 +116,15 @@ class LoginFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
-    companion object {
-        @JvmStatic
-        fun newInstance(accessToken: String) =
-            LoginFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ACCESS_TOKEN, accessToken)
-                }
-            }
-    }
+//    companion object {
+//        @JvmStatic
+//        fun newInstance(accessToken: String) =
+//            LoginFragment().apply {
+//                arguments = Bundle().apply {
+//                    putString(ACCESS_TOKEN, accessToken)
+//                }
+//            }
+//    }
 
 //    val newModel = loop.mostRecentModel!!
 //    Log.i("New Model", "${newModel.email}, ${newModel.password}, ${newModel.canLogin}, ${newModel.canLogin}")

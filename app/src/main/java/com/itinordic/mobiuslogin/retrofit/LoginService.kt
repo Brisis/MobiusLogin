@@ -3,9 +3,7 @@ package com.itinordic.mobiuslogin.retrofit
 import android.util.Log
 import com.itinordic.mobiuslogin.LoginFragment
 import com.itinordic.mobiuslogin.data.AccessToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,7 +13,9 @@ import retrofit2.Response
  */
 class LoginService {
     lateinit var responseToken: String
-    fun login(username: String,password: String) : String {
+    lateinit var responseBody: Response<AccessToken>
+    var isSuccess : Boolean = false
+    suspend fun login(username: String, password: String) : Response<AccessToken> {
         val retrofitApi : GetDataService = RetrofitAPI.getInstance().create(GetDataService::class.java)
         // launching a new coroutine
 
@@ -35,13 +35,12 @@ class LoginService {
                 call: Call<AccessToken>,
                 response: Response<AccessToken>
             ) {
+                responseBody = response
                 if (response.isSuccessful){
-                    responseToken = response.body()!!.accessToken
-                    Log.d("AccessToken: ", responseToken)
-                    LoginFragment.newInstance(responseToken)
+                    Log.d("AccessToken: ", response.message())
                 }
                 else {
-                    Log.d("AccessTokenError: ", responseToken)
+                    Log.d("AccessTokenError: ", response.message())
                 }
             }
 
@@ -51,6 +50,8 @@ class LoginService {
 
         })
 
-        return responseToken
+        delay(2000)
+
+        return responseBody
     }
 }
